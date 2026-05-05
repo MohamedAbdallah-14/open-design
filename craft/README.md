@@ -49,6 +49,7 @@ skill — so the loud failure mode is not worth the friction.
 | `typography.md` | `typography` | Any skill that emits typed content (~all skills) |
 | `color.md` | `color` | Any skill that emits styled output (~all skills) |
 | `anti-ai-slop.md` | `anti-ai-slop` | Marketing pages, landing pages, decks |
+| `state-coverage.md` | `state-coverage` | Any skill with stateful UI (dashboards, mobile apps, forms, list/table views) |
 
 More sections (`motion`, `icons`, `craft-details`) will be added in
 follow-up PRs as we wire the linter side.
