@@ -59,11 +59,12 @@ A purely behavioral craft file (state-coverage, animation-discipline) is guidanc
 | `color.md` | `color` | Any skill that emits styled output (~all skills) |
 | `anti-ai-slop.md` | `anti-ai-slop` | Marketing pages, landing pages, decks |
 | `state-coverage.md` | `state-coverage` | Any skill with stateful UI (dashboards, mobile apps, forms, list/table views) |
+| `animation-discipline.md` | `animation-discipline` | Any skill that ships motion: mobile apps, multi-screen flows, gamified UI, transitions, microinteractions |
 
 **Partial-stateful skills.** A skill that's mostly static but contains an embedded form, data table, or query surface should opt in. State-coverage rules apply to the stateful component, not the whole page.
 
-More sections (`motion`, `icons`, `craft-details`) will be added in
-follow-up PRs as we wire the linter side.
+More sections (`icons`, `craft-details`) will be added in follow-up
+PRs as we wire the linter side.
 
 ## Attribution
 
