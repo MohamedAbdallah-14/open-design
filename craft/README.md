@@ -42,6 +42,15 @@ a follow-up PR, with no skill edit needed. The cost of a missed
 reference is a missing paragraph in the system prompt, not a broken
 skill — so the loud failure mode is not worth the friction.
 
+### Enforcement levels
+
+Craft files mix auto-checked rules and guidance.
+
+- **Auto-checked.** Rules wired into `apps/daemon/src/lint-artifact.ts` — currently the P0 list in `anti-ai-slop.md` (Tailwind-indigo accent, two-stop hero gradients, emoji-as-icons, etc.). The linter blocks artifact generation on these.
+- **Guidance.** The rest. The agent reads them, reviewers apply them, the linter doesn't.
+
+A purely behavioral craft file (state-coverage, animation-discipline) is guidance unless a specific rule is later promoted into `lint-artifact.ts`.
+
 ## Files
 
 | File | Section name | When to require |
@@ -50,6 +59,8 @@ skill — so the loud failure mode is not worth the friction.
 | `color.md` | `color` | Any skill that emits styled output (~all skills) |
 | `anti-ai-slop.md` | `anti-ai-slop` | Marketing pages, landing pages, decks |
 | `state-coverage.md` | `state-coverage` | Any skill with stateful UI (dashboards, mobile apps, forms, list/table views) |
+
+**Partial-stateful skills.** A skill that's mostly static but contains an embedded form, data table, or query surface should opt in. State-coverage rules apply to the stateful component, not the whole page.
 
 More sections (`motion`, `icons`, `craft-details`) will be added in
 follow-up PRs as we wire the linter side.

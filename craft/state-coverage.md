@@ -24,6 +24,16 @@ Render-and-screenshot test: every list, table, card, form, and panel in the
 artifact has all five. Missing states are the most common silent failure of
 AI-generated UI.
 
+**Test matrix.** Concrete edge scenarios the surface must survive:
+
+| Skill type | Edge scenario |
+|---|---|
+| Dashboard / table | 10,000+ rows, all numeric columns, sort + filter applied |
+| Mobile card / list | 200-char title, missing avatar, missing secondary CTA |
+| Form | All optional fields empty, all required fields at max length |
+| Search results | Single-character query, query with only special chars, 1,000+ result count |
+| Detail view | Missing all optional metadata, RTL primary content with LTR embeds |
+
 ## Form-specific states
 
 Forms add three states on top of the five.
@@ -47,6 +57,8 @@ Empty is not the absence of state. It is its own state with a job.
 - **Cleared empty** — celebratory phrasing, optional next-action.
 - **Error-as-empty** — never. An error is its own state with recovery information; do not collapse error into empty.
 
+**Server-driven vs client-driven.** When a search or query API can return fallback content in the empty payload (suggestions, related categories, popular results), prefer that over a client-side echo. Algolia, Elastic, and most modern search backends support this — the server has more context for what "no results, but maybe try X" should mean.
+
 ## Error state composition
 
 Every error must answer three questions, in this order:
@@ -68,6 +80,13 @@ Severity tiers:
 
 Match severity to surface scope. A field validation failure does not warrant
 a page-level error.
+
+**Retry discipline.** A retry surface is not a button alone. It has timing rules:
+
+- First retry fires immediately on user click.
+- Second and third retries use exponential backoff: 2 s, 4 s, 8 s max.
+- After 3 failed retries, replace "Retry" with "Contact support" plus a copyable error ID. The user has done their job; the system now needs a human.
+- Show "Last attempted: Xs ago" on the error surface after the first retry, so the user knows how stale the failure is.
 
 ## Loading state thresholds
 
