@@ -45,8 +45,9 @@ Expected: pnpm 10.33.2, no errors, all workspace packages linked.
 
 ```bash
 pnpm typecheck
-pnpm test
-pnpm check:residual-js
+pnpm guard
+pnpm --filter @open-design/web test
+pnpm --filter @open-design/daemon test
 ```
 Expected: all pass on the unmodified `feat/critique-theater` branch.
 
@@ -2194,7 +2195,7 @@ git commit -m "chore(rollout): M0 ships behind OD_CRITIQUE_ENABLED=false"
 
 ### Task 15.2: Final validation matrix
 
-- [ ] **Step 1: Run** `pnpm typecheck`, `pnpm test`, `pnpm test:ui`, `pnpm test:e2e:live`, `pnpm build`, `pnpm check:residual-js`, `pnpm check:dead-exports`, `pnpm check:critique-coverage`, `pnpm size-limit`. All must pass.
+- [ ] **Step 1: Run** `pnpm guard`, `pnpm typecheck`, package-scoped tests/builds for changed packages, `pnpm -C e2e test:ui`, `pnpm -C e2e test:e2e:live`, `pnpm check:dead-exports`, `pnpm check:critique-coverage`, `pnpm size-limit`. All must pass.
 
 - [ ] **Step 2: Run** `pnpm tools-dev run web --daemon-port 17456 --web-port 17573` and validate live happy path with a real CLI on PATH.
 
@@ -2213,8 +2214,8 @@ gh pr create --title "feat: Critique Theater (panel-tempered, scored, replayable
 - Zero new processes; same BYOK story; works across all 12 adapters with conformance grading.
 
 ## Test plan
-- [ ] pnpm typecheck && pnpm test && pnpm test:ui
-- [ ] pnpm test:e2e:live (Playwright happy + interrupt + visual + a11y)
+- [ ] pnpm guard && pnpm typecheck && pnpm -C e2e test:ui
+- [ ] pnpm -C e2e test:e2e:live (Playwright happy + interrupt + visual + a11y)
 - [ ] pnpm size-limit (Theater bundle < 18 KiB gz)
 - [ ] pnpm check:critique-coverage (no orphan surfaces)
 - [ ] manual: enable in Settings, submit a brief, watch Theater, ship at >= 8.0
