@@ -21,6 +21,8 @@ od:
   design_system:
     requires: true
     sections: [color, typography, layout, components]
+  craft:
+    requires: [rtl-and-bidi]
 ---
 
 # Docs Page Skill
