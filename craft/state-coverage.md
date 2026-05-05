@@ -99,7 +99,7 @@ component library.
 | 300 ms – 2 s | Subtle spinner or skeleton. |
 | 2 – 10 s | Skeleton matched to expected layout, or labelled spinner ("Loading payments…"). |
 | 10 – 30 s | Determinate progress bar with cancel option. |
-| 30 – 60 s | Progress bar + "Taking longer than expected." |
+| 30 – 60 s | Progress bar with explicit cancel affordance. The "taking longer than expected" notice already appeared at 15 s; do not repeat it. |
 | 60 s+ | Stop animation. Show error with retry, cancel, or continue. |
 
 Never leave a spinner running indefinitely. Start a timeout on every request.
