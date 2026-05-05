@@ -139,15 +139,22 @@ function isTestFile(fileName: string): boolean {
   return /\.test\.tsx?$/.test(fileName);
 }
 
-function isUnderSourceDirectory(repositoryPath: string): boolean {
-  return repositoryPath.split("/").includes("src");
-}
-
 function expectedTestPath(repositoryPath: string): string {
-  return repositoryPath.replace("/src/", "/tests/");
+  const [scope, project, ...relativeParts] = repositoryPath.split("/");
+  if (!testLayoutScopedDirectories.includes(scope ?? "") || project == null || relativeParts.length === 0) {
+    return repositoryPath;
+  }
+
+  const normalizedRelativeParts = relativeParts[0] === "src" ? relativeParts.slice(1) : relativeParts;
+  return [scope, project, "tests", ...normalizedRelativeParts].join("/");
 }
 
-async function collectSourceTests(directory: string): Promise<string[]> {
+function isAllowedScopedTestPath(repositoryPath: string): boolean {
+  const [scope, project, directory] = repositoryPath.split("/");
+  return testLayoutScopedDirectories.includes(scope ?? "") && project != null && directory === "tests";
+}
+
+async function collectTestLayoutViolations(directory: string): Promise<string[]> {
   const entries = await readdir(directory, { withFileTypes: true });
   const violations: string[] = [];
 
@@ -159,7 +166,7 @@ async function collectSourceTests(directory: string): Promise<string[]> {
         continue;
       }
 
-      violations.push(...(await collectSourceTests(fullPath)));
+      violations.push(...(await collectTestLayoutViolations(fullPath)));
       continue;
     }
 
@@ -168,7 +175,7 @@ async function collectSourceTests(directory: string): Promise<string[]> {
     }
 
     const repositoryPath = toRepositoryPath(fullPath);
-    if (isUnderSourceDirectory(repositoryPath)) {
+    if (!isAllowedScopedTestPath(repositoryPath)) {
       violations.push(repositoryPath);
     }
   }
@@ -178,7 +185,9 @@ async function collectSourceTests(directory: string): Promise<string[]> {
 
 async function checkTestLayout(): Promise<boolean> {
   const violations = (
-    await Promise.all(testLayoutScopedDirectories.map((directory) => collectSourceTests(path.join(repoRoot, directory))))
+    await Promise.all(
+      testLayoutScopedDirectories.map((directory) => collectTestLayoutViolations(path.join(repoRoot, directory))),
+    )
   ).flat();
 
   if (violations.length > 0) {
@@ -189,7 +198,7 @@ async function checkTestLayout(): Promise<boolean> {
     return false;
   }
 
-  console.log("Test layout check passed: apps/packages/tools tests live outside src.");
+  console.log("Test layout check passed: apps/packages/tools tests live in sibling tests directories.");
   return true;
 }
 
