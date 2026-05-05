@@ -24,7 +24,7 @@ od:
     requires: true
     sections: [color, typography, layout, components]
   craft:
-    requires: [animation-discipline]
+    requires: [state-coverage, animation-discipline]
   example_prompt: "Design a 3-screen mobile onboarding flow for a meditation app — welcome, value props, sign-in."
 ---
 

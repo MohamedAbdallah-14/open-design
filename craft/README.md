@@ -34,13 +34,19 @@ extension. Unknown values are silently ignored (forward-compatible).
 
 ### Why silent fallback instead of fail-fast?
 
-A skeptical reader will ask: "If a skill requests `motion` and we don't
-ship `motion.md` yet, shouldn't we warn the user?" We chose
-forward-compatibility over fail-fast: a skill authored today can list
-`motion` and start benefiting the moment we vendor `craft/motion.md` in
-a follow-up PR, with no skill edit needed. The cost of a missed
-reference is a missing paragraph in the system prompt, not a broken
-skill — so the loud failure mode is not worth the friction.
+A skeptical reader will ask: "If a skill requests a planned-but-not-yet-vendored
+section and the corresponding file doesn't exist yet, shouldn't we warn
+the user?" We chose forward-compatibility over fail-fast: a skill
+authored today can list a planned slug and start benefiting the moment
+the matching `craft/<slug>.md` is vendored in a follow-up PR, with no
+skill edit needed. The cost of a missed reference is a missing
+paragraph in the system prompt, not a broken skill — so the loud
+failure mode is not worth the friction.
+
+Note for skill authors arriving from older guidance: an earlier draft
+used `motion` as the future-slug placeholder. The shipped equivalent
+today is `animation-discipline`. Use that one if your skill emits
+motion.
 
 ### Enforcement levels
 

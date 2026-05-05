@@ -30,7 +30,7 @@ od:
     requires: true
     sections: [color, typography, layout, components]
   craft:
-    requires: [animation-discipline]
+    requires: [state-coverage, animation-discipline]
   example_prompt: "Design a gamified life-management app — multi-screen mobile prototype: cover poster, today's quests with XP, and a quest detail. ‘Daily quests for becoming a better human.’"
 ---
 

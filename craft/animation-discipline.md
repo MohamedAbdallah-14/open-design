@@ -46,13 +46,15 @@ state-confirmation feedback.
 | 150 ms | Default for state-confirmation |
 | 200–300 ms | Entering UI (modals, sheets, dropdowns) |
 | 300–500 ms | Cross-screen transitions, container morphs |
-| > 500 ms | Almost never. Hard ceiling. |
+| > 500 ms | Reserved for cross-screen, staged, or platform-native transitions (e.g. M3 `long2`-`extraLong4`, Heer & Robertson 2007's per-stage recommendation). |
 
-Above 500 ms the user notices the motion as motion — they're now
-waiting on the UI rather than working through it. Two qualifications:
-frequent animations (a hover effect seen 50 times per session) need to
-stay ≤200 ms; mobile animations should run 20–30% shorter than desktop
-equivalents because travel distances are shorter.
+Non-navigation microinteractions — hover, press, toggle, validation,
+chip selection, row expansion — should stay under 500 ms. Past that the
+user notices the motion as motion and waits on the UI rather than
+working through it. Two qualifications: frequent animations (a hover
+effect seen 50 times per session) need to stay ≤200 ms; mobile
+animations should run 20–30% shorter than desktop equivalents because
+travel distances are shorter.
 
 ## Curve vs spring
 
@@ -102,6 +104,28 @@ attentional, and reading populations, not vestibular. Vestibular
 language lives in 2.3.3, which is **AAA**. Don't conflate the two.
 Building for vestibular users is a craft commitment beyond the legal
 floor, not a WCAG mandate.
+
+**Flashing limits.** WCAG 2.3.1 (Level A) permits flashing only when
+there are no more than three flashes within any one-second period, or
+the flashing area stays below the general and red flash thresholds.
+WCAG 2.3.2 (AAA) forbids flashing more than three times within any
+one-second period, regardless of area or brightness. The protected
+concern is photosensitive epilepsy; the legal floor isn't negotiable. For gamified UI, onboarding celebrations, sparkles,
+confetti, level-up bursts, and shimmer: avoid rapid flashing unless
+tested against the thresholds, and prefer one-shot animations over
+loops.
+
+## Repeated and ambient motion
+
+The rules above target one-shot transitions. Looping motion (skeleton
+shimmer, idle backgrounds, autoplay, reward bursts) has different
+constraints.
+
+- Cap iteration count: carousels at 3-5 cycles then pause; skeleton shimmer until content lands, never indefinitely.
+- WCAG 2.2.2 (Level A) requires a pause control for any motion running longer than 5 seconds — moving, blinking, or scrolling content, not only video.
+- Cancel ambient motion on route change.
+- Reward animations are one-shot. Confetti, sparkles, level-up bursts fire once and dismiss; no looping timer.
+- Spinners must not run indefinitely. Escalate to progress/cancel states and stop animation at 60 s, matching `state-coverage.md`.
 
 ## Cross-platform handoff
 
