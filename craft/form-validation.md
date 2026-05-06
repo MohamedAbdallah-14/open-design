@@ -197,7 +197,7 @@ that ship to mobile (mobile-onboarding, mobile-app, etc.).
 |---|---|---|
 | iOS UIKit | Hand-rolled state on the view controller; `UITextField` doesn't carry a built-in invalid flag | `UIAccessibility.post(notification: .announcement, argument: "Email is required")` |
 | iOS SwiftUI | `TextField` + `@State`-driven validation; no built-in `Form`-level validity API as of iOS 18 | `AccessibilityNotification.Announcement("…").post()` (iOS 17+) |
-| Android Compose | `OutlinedTextField(isError = true, supportingText = { Text("…") })` — `isError` wires the AT error semantic for you | `LiveRegion` semantic on the supporting-text node, or `view.announceForAccessibility(…)` |
+| Android Compose | `OutlinedTextField(isError = true, supportingText = { Text("…") })` — `isError` wires the AT error semantic for you | `Modifier.semantics { liveRegion = LiveRegionMode.Polite }` on the supporting-text node, or `LocalView.current.announceForAccessibility(message)` |
 | Flutter | `TextFormField(validator: (v) => …)` inside a `Form`, `formKey.currentState!.validate()` | `SemanticsService.announce(message, Directionality.of(context))` — never hardcode `TextDirection.ltr`; pull ambient direction so Arabic / Hebrew / Persian flows announce correctly |
 | React Native | Hand-rolled per field; no platform validity flag | `accessibilityLiveRegion="polite"` on the error node (Android) + `AccessibilityInfo.announceForAccessibility(...)` (iOS) |
 
