@@ -173,7 +173,7 @@ Three rules that survive across stacks:
 
 - **Server is the truth, client is the optimization.** Same schema runs in both. Returning `{ errors }` from the action (not throwing) is what feeds back into `useActionState`'s state slot — throwing routes to the Error Boundary and loses the form data.
 - **Standard Schema is the contract, not Zod.** A form library that ships per-validator resolver shims (`zodResolver`, `valibotResolver`, etc.) is yesterday's stack. Accept any `~standard`-compliant validator.
-- **`novalidate` on `<form>` does not mean "skip validation".** It means "let the form library repaint errors instead of the browser's bubble." Keep `required` / `pattern` / `type` attributes — progressive enhancement still works without JS, the form library just owns the visible chrome when JS is on. (HTML attribute is lowercase `novalidate`; the IDL property on the form element is `noValidate`.)
+- **`novalidate` on `<form>` does not mean "skip validation".** It means "let the form library repaint errors instead of the browser's bubble." But the trade-off is real: a literal server-rendered `<form novalidate>` disables the browser's submit-blocking and native validation UI **even when JS is unavailable**, which loses the no-JS constraint-validation floor. Pick one of two patterns. **A:** render `<form>` without `novalidate` server-side and have the form library set `form.noValidate = true` after hydration — the no-JS user keeps the browser's native validation, the JS user gets the library's chrome. **B:** ship `novalidate` from the start only when the submit path reaches server validation without JS (Server Action, classic POST handler) so the no-JS user is still protected by the server. Either way, keep `required` / `pattern` / `type` attributes — they survive JS failure and integrate with autofill. (HTML attribute is lowercase `novalidate`; the IDL property on the form element is `noValidate`.)
 
 ## WCAG 3.3.x beyond Error Identification
 
@@ -198,7 +198,7 @@ that ship to mobile (mobile-onboarding, mobile-app, etc.).
 | iOS UIKit | Hand-rolled state on the view controller; `UITextField` doesn't carry a built-in invalid flag | `UIAccessibility.post(notification: .announcement, argument: "Email is required")` |
 | iOS SwiftUI | `TextField` + `@State`-driven validation; no built-in `Form`-level validity API as of iOS 18 | `AccessibilityNotification.Announcement("…").post()` (iOS 17+) |
 | Android Compose | `OutlinedTextField(isError = true, supportingText = { Text("…") })` — `isError` wires the AT error semantic for you | `LiveRegion` semantic on the supporting-text node, or `view.announceForAccessibility(…)` |
-| Flutter | `TextFormField(validator: (v) => …)` inside a `Form`, `formKey.currentState!.validate()` | `SemanticsService.announce(…, TextDirection.ltr)` |
+| Flutter | `TextFormField(validator: (v) => …)` inside a `Form`, `formKey.currentState!.validate()` | `SemanticsService.announce(message, Directionality.of(context))` — never hardcode `TextDirection.ltr`; pull ambient direction so Arabic / Hebrew / Persian flows announce correctly |
 | React Native | Hand-rolled per field; no platform validity flag | `accessibilityLiveRegion="polite"` on the error node (Android) + `AccessibilityInfo.announceForAccessibility(...)` (iOS) |
 
 Two parity rules that catch most AI-generated mobile forms:
