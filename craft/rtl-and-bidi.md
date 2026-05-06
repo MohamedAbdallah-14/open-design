@@ -94,7 +94,8 @@ Material 3 RTL guidance and Apple HIG internationalization.
 
 **Must mirror:**
 
-- Directional arrows (back / forward / next / previous), navigation rail position, tab order, slider fill direction, progress-bar fill, calendar-grid weekday order.
+- Directional arrows (back / forward / next / previous), navigation rail position, tab order, calendar-grid weekday order.
+- Slider fill direction and **non-media** progress-bar fill (a download progress bar, a form-completion bar, an upload status). Media scrubbers stay LTR — see the Media row below.
 - Checkbox-and-label position. Label sits to the right in LTR, to the left in RTL.
 - Phone-number and IBAN affordances when the surrounding paragraph is RTL but the value itself is LTR — wrap the value in `<bdi dir="ltr">` (or `<span dir="ltr">`) so the digits don't reflow. Bare `<bdi>` is not enough: phone numbers and account numbers contain mostly weak / neutral characters, so first-strong direction detection is unreliable. Force LTR explicitly.
 
@@ -102,7 +103,7 @@ Material 3 RTL guidance and Apple HIG internationalization.
 
 - Clock faces. Clockwise is universal.
 - Circular refresh / sync / reload icons. Same reason.
-- Media playback controls (play / pause / fast-forward / rewind). They represent tape direction, not reading direction.
+- Media playback controls (play / pause / fast-forward / rewind) **and the media scrubber / progress timeline**. They represent tape direction, not reading direction.
 - Charts and graphs. X-axis stays mathematical, not linguistic.
 - Photographs, brand logos, physical-object icons (camera, keyboard, headphones). Identity over direction.
 
