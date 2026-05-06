@@ -181,5 +181,5 @@ icons, platform-specific placement).
 
 **HTML semantics:**
 
-- Reaching for `unicode-bidi: plaintext` when `<bdi dir="auto">` (or `<bdi>` with implicit auto-detect) is the markup form of the same idea. UAX #9 §2.7: prefer markup over CSS or control characters when markup is available.
+- Reaching for CSS bidi controls (`unicode-bidi: isolate` / `plaintext` / `embed`) for inline runs when `<bdi>` or a `dir`-bearing element does the job. Prefer semantic isolation in HTML for inline content; `unicode-bidi: plaintext` operates on a different surface (it changes how base direction is determined for each plaintext paragraph in a block) and should only be used when that block-level paragraph behavior is explicitly required and tested. The two are not drop-in equivalents — don't lint one as a replacement for the other.
 - Bare `<bdi>` around phone / IBAN / card numbers in an RTL paragraph. First-strong detection on weak/neutral characters is unreliable; force `dir="ltr"` explicitly.
