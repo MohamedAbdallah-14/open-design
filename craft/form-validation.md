@@ -97,7 +97,7 @@ Rules of the API:
 
 - **Empty string clears `setCustomValidity`.** Not `null`, not no-arg.
 - **`form.requestSubmit()` honors validation; `form.submit()` skips it.** Never call the second.
-- `disabled` controls are barred from validation and not submitted. The HTML spec says `readonly` is also barred, but `readonly` only has defined behavior on `<input>` and `<textarea>` — implementations diverge for `<select readonly>` and `<button readonly>` ([whatwg/html#11841](https://github.com/whatwg/html/issues/11841)). For non-input controls, use `disabled` (or `aria-readonly` + a hidden mirror input if you need the value submitted).
+- `disabled` controls are barred from validation and not submitted. The HTML spec says `readonly` is also barred, but `readonly` only has defined behavior on `<input>` and `<textarea>` — implementations diverge for `<select readonly>` and `<button readonly>` ([whatwg/html#11841](https://github.com/whatwg/html/issues/11841)). For non-input controls where the value must still submit, the safe pattern is `disabled` plus a same-named hidden `<input>` carrying the value, or rendering the non-editable text alongside a hidden `<input>`. `aria-readonly` alone is not enough — a `<select>` or custom widget tagged `aria-readonly="true"` is still interactable, so the visible control can drift while the hidden input ships a stale or different value. If you do use `aria-readonly`, you must also block the interaction or keep both values in sync.
 - `inputmode` is a virtual-keyboard hint, **not** validation. `<input type="text" inputmode="numeric" pattern="[0-9]*">` is the Baymard-recommended shape for ZIPs / OTPs / card numbers; `pattern="[0-9]*"` is the historical iOS-Safari trigger for the numeric keypad on top of `inputmode`. `type="number"` adds spinners, strips leading zeros, applies locale-decimal handling, and varies field width across browsers — wrong for any of these.
 
 ## Error wiring beyond the baseline
@@ -203,7 +203,7 @@ that ship to mobile (mobile-onboarding, mobile-app, etc.).
 
 Two parity rules that catch most AI-generated mobile forms:
 
-- **Use the platform's native validation flag where one exists.** Compose's `isError = true` already wires the semantic; do not also write `Modifier.semantics { error("…") }` by hand — the two desync, and `isError` already drives the AT path.
+- **Use the platform's native validation flag — and pair it with the platform's error-message semantic where one exists.** On Compose, `isError = true` is the right boolean state for the field visuals and AT error-state cue, but it does *not* carry the localized error message. Pair it with `Modifier.semantics { error(message) }` so accessibility services get the actual text — the same string you render in `supportingText`. The trap is duplication: a hand-rolled `Modifier.semantics { error("Email is required") }` next to a different supporting-text string desyncs. Source `error()` from the same state field as `supportingText` so they stay in sync.
 - **Don't mirror web ARIA into mobile semantics.** `aria-describedby` on a SwiftUI `TextField` is a no-op. Use the platform announcement primitive (`AccessibilityNotification.Announcement` on SwiftUI, `UIAccessibility.post` on UIKit, `announceForAccessibility` on Android, `SemanticsService.announce` on Flutter) for state-change events that need to reach the screen reader.
 
 ## Common mistakes (lint these)
