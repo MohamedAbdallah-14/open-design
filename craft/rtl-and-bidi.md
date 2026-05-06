@@ -22,9 +22,12 @@ Three patterns cover the common cases:
 - **Mixed-language subtree.** Nest `<section dir="ltr" lang="en">…</section>` (or vice versa) when an embedded block uses a different script. Code samples, English citations, foreign brand names.
 - **User-generated content of unknown direction.** `dir="auto"` on the paragraph. The browser resolves direction from the first strong directional character in the run.
 
-Setting `lang` without `dir` is fine when the language has only one
-direction in practice (English doesn't need `dir="ltr"`). Setting
-`dir` without `lang` is rarely correct — at minimum drop the
+Setting `lang` without `dir` is fine **at the document root in a
+default-LTR page** — English doesn't need `dir="ltr"` there because
+the bidi base direction is already LTR. Inside any opposite-direction
+ancestor, `lang` does not reset the inherited base direction, so set
+both `lang` and `dir` on the subtree (`<section dir="ltr" lang="en">`).
+Setting `dir` without `lang` is rarely correct — at minimum drop the
 appropriate ISO-639 tag in.
 
 ## Logical properties first
@@ -65,12 +68,20 @@ that solve different problems:
 - **Isolate controls** (modern, prefer these): U+2066 LRI, U+2067 RLI, U+2068 FSI — opened with these, all closed with U+2069 PDI. An isolated run does not affect, and is not affected by, the surrounding paragraph's bidi resolution. Use FSI when the embedded run's direction is unknown ahead of time.
 - **Embedding / override controls** (legacy): U+202A LRE, U+202B RLE, U+202D LRO, U+202E RLO — all closed with U+202C PDF. These nest within the surrounding paragraph rather than isolating from it; LRO/RLO additionally force a direction onto neutral characters. Newer code should use isolates; touch embeddings only when interoperating with text from systems that emit them.
 
-**Use `<bdi>` in HTML and the U+2068 / U+2069 isolate pair for plain
-text.** UAX #9 §2.7: *"where available, markup should be used instead
-of the explicit formatting characters."* `<bdi>` has been Baseline
-Widely Available since January 2020. Choose the markup form whenever
-you have markup; reach for the control characters only in plain-text
-contexts (logs, plain-text emails, terminal output).
+**Use `<bdi>` in HTML; in plain text, pick the isolate that matches
+what you know about the run.** UAX #9 §2.7: *"where available, markup
+should be used instead of the explicit formatting characters."*
+`<bdi>` has been Baseline Widely Available since January 2020.
+Reach for control characters only in plain-text contexts (logs,
+plain-text emails, terminal output). When you do:
+
+- **LRI U+2066 + PDI U+2069** for known-LTR runs (English name in an Arabic paragraph, code-style identifiers, phone numbers).
+- **RLI U+2067 + PDI U+2069** for known-RTL runs (Arabic name in an English paragraph).
+- **FSI U+2068 + PDI U+2069** for unknown direction (UGC where the author and language can vary).
+
+Don't reach for FSI as the default — it auto-detects from the first
+strong character, which is the wrong choice when you already know
+what direction the run should be.
 
 `dir="auto"` on a paragraph or `<bdi>` lets the browser detect
 direction from the first strong directional character. Best for
