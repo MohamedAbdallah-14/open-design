@@ -66,7 +66,7 @@ The four rules:
 1. **First blur after edit** runs the field-level constraint. Not on focus, not on first keystroke, not on every keystroke.
 2. **Once a field is invalid, switch to `input`-event re-validation** so the error clears the moment input becomes valid. Don't make the user blur again to dismiss it.
 3. **On submit**, run the schema parse. Move focus to the error summary at the top of the form (a heading-led container with `tabindex="-1"`, no `role="alert"` — see the wiring section), or to the first invalid field if no summary exists. Don't move focus on every keystroke.
-4. **Async checks** (uniqueness, address lookup, server-confirmation) debounce 250-500 ms, announce via a polite live region, and never block submit on a network round-trip.
+4. **Async checks** split into two paths. *Background preflight* (uniqueness while typing, address lookup) debounces 250-500 ms, announces via a polite live region, and never gates typing or keeps the submit button disabled indefinitely. *Authoritative server validation on submit* is different: the submit path must await the server's response and surface field errors from it, since the server is the truth. Don't conflate the two — the rule is "don't let a slow background check freeze the form," not "don't ever wait for the server."
 
 CSS gets you most of timing rule 1 for free: style off `:user-invalid`
 not `:invalid`. The `:user-invalid` selector is Baseline Newly

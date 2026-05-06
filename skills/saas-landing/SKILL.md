@@ -20,7 +20,7 @@ od:
     requires: true
     sections: [color, typography, layout, components]
   craft:
-    requires: [typography, color, anti-ai-slop, form-validation]
+    requires: [typography, color, anti-ai-slop]
   inputs:
     - name: product_name
       type: string
