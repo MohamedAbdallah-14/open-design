@@ -7,8 +7,9 @@ before it ships.
 
 > Grounded in primary sources: WCAG 2.2 Understanding pages,
 > ISO/IEC 40500:2025, ADA Title II 2024 + 2026 IFR, EN 301 549 v3.2.1,
-> WAI-ARIA 1.3 + AccName 1.2 + Core AAM 1.2, WebAIM Million 2025,
-> A11yn (arXiv 2510.13914), APCA W3C silver branch.
+> WAI-ARIA 1.3 + AccName 1.2 + Core AAM 1.2, WebAIM Million 2026
+> (February 2026 crawl), A11yn (arXiv 2510.13914), APCA W3C silver
+> branch.
 
 ## Prior art and scope
 
@@ -93,11 +94,12 @@ unfocused states. A 1-px outline at 3:1 doesn't qualify.
 
 ## Form input labels
 
-WebAIM Million 2025 (which uses WAVE, not axe-core): **48.2% of top 1M
-home pages have at least one missing form-input label; 34.2% of all
-6.3M inputs are unlabeled**. Both rates are flat year-over-year while
-overall errors per page are dropping. Form labelling is one of the
-two categories trending *worse*.
+WebAIM Million 2026 (which uses WAVE, not axe-core): **51% of top 1M
+home pages have at least one missing form-input label; 33.1% of all
+6.9M inputs are unlabeled**. The page-level rate moved from 48.2%
+(2025) to 51% (2026) — missing-label prevalence is one of the few
+categories WebAIM explicitly calls out as rising in 2026, against an
+overall errors-per-page count of 56.1.
 
 Default form-error wiring (WCAG 2.2 + ARIA APG):
 
@@ -122,24 +124,29 @@ does not satisfy it.
 ## Keyboard operability and semantic structure
 
 Visual contrast and labelled inputs don't matter if a keyboard or
-screen-reader user can't reach the control or parse the page. These
-are all Level A — same legal floor as the rules above.
+screen-reader user can't reach the control or parse the page. The
+bullets below are Level A / AA WCAG essentials plus a small set of
+structural conventions OD treats as craft commitments. WCAG levels
+are noted per item.
 
-- **Tab reachability** (2.1.1 Keyboard): every interactive element must be reachable and operable via keyboard. `tabindex="-1"` removes from the tab order; `tabindex` values >0 break document order and should not be used. (2.1.3 No Exception extends 2.1.1 to AAA by removing the underlying-function exception.)
-- **Activation keys** (2.1.1): `<button>` activates on Enter and Space; `<a>` activates on Enter; custom controls must implement the matching key handlers and `role`.
-- **No keyboard trap** (2.1.2): focus must be able to leave any component via the same standard keys it entered with. Modal dialogs are a focus-trap *by design*, not a violation — they trap until dismissed by Escape or the close button.
-- **Focus order** (2.4.3): tab order must follow the meaningful reading order. Don't rely on positive `tabindex` to fix DOM that's out of order; fix the DOM.
-- **Native control first**: a `<button>` is keyboard-operable, focusable, name-resolvable, and announced as a button by every AT for free. `<div role="button" tabindex="0">` requires you to re-implement all of that and most reimplementations miss `aria-pressed`, disabled state, or Space-on-keyup. Reach for ARIA only when no native element fits.
-- **Document language** (3.1.1 Level A): `<html lang="...">` is required. Sub-tree language switches use `lang` on the inner element.
-- **Heading hierarchy** (1.3.1 Info and Relationships, 2.4.6 Headings and Labels AA): one `<h1>` per page; don't skip levels (`<h1>` → `<h3>` without `<h2>`). Visual size and heading level are independent.
-- **Landmarks** (1.3.1, 2.4.1 Bypass Blocks): use `<header>` `<nav>` `<main>` `<aside>` `<footer>` rather than `<div role="banner">` etc. AT users navigate by landmark; a page with no landmarks is a wall of divs.
-- **Text alternatives** (1.1.1 Non-text Content Level A): `<img alt="...">` for content images, `alt=""` for decorative; `aria-label` on icon-only buttons; long-form description for charts and SVG data viz. A chart without a text alternative is unreadable to a screen reader.
+- **Tab reachability** (2.1.1 Keyboard, Level A): every interactive element must be reachable and operable via keyboard. `tabindex="-1"` removes from the tab order; `tabindex` values >0 break document order and should not be used. (2.1.3 No Exception extends 2.1.1 to AAA by removing the underlying-function exception.)
+- **Activation keys** (2.1.1, Level A): `<button>` activates on Enter and Space; `<a href="…">` activates on Enter. A bare `<a>` without `href` is not a link, not focusable, and not keyboard-operable — use `<a href="…">` for navigation or `<button>` for actions, never a placeholder anchor. Custom controls must implement the matching key handlers and `role`.
+- **No keyboard trap** (2.1.2, Level A): focus must be able to leave any component via the same standard keys it entered with. Modal dialogs are a focus-trap *by design*, not a violation — they trap until dismissed by Escape or the close button.
+- **Focus order** (2.4.3, Level A): tab order must follow the meaningful reading order. Don't rely on positive `tabindex` to fix DOM that's out of order; fix the DOM.
+- **Native control first** (craft convention, anchored on 4.1.2 Name/Role/Value Level A): a `<button>` is keyboard-operable, focusable, name-resolvable, and announced as a button by every AT for free. `<div role="button" tabindex="0">` requires you to re-implement all of that and most reimplementations miss `aria-pressed`, disabled state, or Space-on-keyup. Reach for ARIA only when no native element fits.
+- **Document language** (3.1.1, Level A): `<html lang="...">` is required. Sub-tree language switches use `lang` on the inner element.
+- **Heading hierarchy** (1.3.1 Info and Relationships Level A; 2.4.6 Headings and Labels Level AA): WCAG requires programmatically-determined structure and descriptive headings, not a specific outline shape. OD craft convention layers on: prefer one `<h1>` per page and don't skip levels (`<h1>` → `<h3>` without `<h2>`). Visual size and heading level are independent.
+- **Landmarks** (1.3.1, 2.4.1 Bypass Blocks Level A): use `<header>` `<nav>` `<main>` `<aside>` `<footer>` rather than `<div role="banner">` etc. AT users navigate by landmark; a page with no landmarks is a wall of divs.
+- **Text alternatives** (1.1.1 Non-text Content, Level A): `<img alt="...">` for content images, `alt=""` for decorative; `aria-label` on icon-only buttons; long-form description for charts and SVG data viz. A chart without a text alternative is unreadable to a screen reader.
 
 ## ARIA discipline
 
-WebAIM Million 2025 shows ARIA pages average **57 errors** vs **27**
-on non-ARIA pages — gap doubled year-over-year. ARIA deployment is
-outpacing correctness.
+WebAIM Million 2026 shows ARIA pages average **59.1 errors** vs
+**42** on non-ARIA pages — about 17 extra errors on the ARIA side.
+The gap was 30 in 2025 (57 vs 27) and 15 in 2024; YoY direction is
+noisy, but ARIA usage is up (82.7% of home pages in 2026 vs 79.4% in
+2025) while correctness lags. ARIA deployment outpaces ARIA
+correctness.
 
 Decision order, per ARIA APG:
 
@@ -185,7 +192,8 @@ reader path.
 - "Heading size = heading level" — visual hierarchy and `<h1>`/`<h2>`/`<h3>` are independent. Style the level you mean.
 - "WebAIM Million uses axe-core" — uses WAVE.
 - "WCAG 3 will use APCA" — APCA was dropped from WCAG 3 in July 2023.
-- "Adding ARIA improves accessibility" — empirically the opposite. WebAIM Million 2025: ARIA pages average 2× the errors.
+- "Adding ARIA improves accessibility" — empirically the opposite. WebAIM Million 2026: ARIA pages average 59.1 errors, non-ARIA pages 42.
+- "Bare `<a>` with click handler is a link" — wrong. `<a>` without `href` is not focusable, not keyboard-operable, and not a link. Use `<a href="…">` for navigation, `<button>` for actions.
 - Removing the focus outline via `outline: none` without a replacement. Triple failure: 1.4.11, 2.4.7, 2.4.13.
 - Placeholder text as the only label for a form input. Fails 1.3.1 and 3.3.2; placeholder disappears on input.
 - Using `aria-description` as the sole state-carrier on `role="row"`. JAWS 2025/2026 silently drops it ([FreedomScientific standards-support #927](https://github.com/FreedomScientific/standards-support/issues/927)).
