@@ -9,16 +9,34 @@ decide rendering rules (color, typography, motion, states, ARIA, RTL,
 forms); this file decides composition rules grounded in named research.
 
 > Distilled from primary sources: Hick (1952) + Hyman (1953), Miller
-> (1956), Fitts (1954), Wertheimer (1923) for proximity / similarity /
-> Prägnanz, Palmer (1992) for Common Region, Palmer & Rock (1994) for
-> Uniform Connectedness, Kahneman/Fredrickson/Schreiber/Redelmeier
-> (1993) for Peak-End, Zeigarnik (1927), Csíkszentmihályi (1975), Hull
-> (1932), von Restorff (1933), Broadbent (1958), Sweller (1988), Postel
-> (RFC 760, 1980), Carroll & Rosson (1987), Tversky & Kahneman (1974)
-> for Anchoring, Kurosu & Kashimura (1995), Iyengar & Lepper (2000),
-> Toffler (1970), Pareto (c.1906) / Juran (1941), Ebbinghaus (1885),
-> Ockham (14th c.), Tesler at Apple (1980s), Nielsen (2000), Norman
-> *POET* (1988), Parkinson (1955).
+> (1956) for chunking / `7±2` channel capacity, Cowan (2001) for the
+> modern ~4 working-memory bound, Fitts (1954), Wertheimer (1923) for
+> proximity / similarity / Prägnanz, Palmer (1992) for Common Region,
+> Palmer & Rock (1994) for Uniform Connectedness, Kahneman /
+> Fredrickson / Schreiber / Redelmeier (1993) for Peak-End, Zeigarnik
+> (1927), Csíkszentmihályi (1975), Hull (1932), von Restorff (1933),
+> Broadbent (1958), Sweller (1988), Postel (RFC 760, 1980), Carroll &
+> Rosson (1987), Tversky & Kahneman (1974) for Anchoring, Kurosu &
+> Kashimura (1995), Iyengar & Lepper (2000), Toffler (1970), Pareto
+> (c.1906) / Juran (*Quality Control Handbook*, 1951), Ebbinghaus
+> (1885), Ockham (14th c.), Tesler at Apple (1980s), Nielsen (2000),
+> Norman *POET* (1988), Parkinson (1955).
+
+## Prior art and scope
+
+Existing public catalogs of UX heuristics (Yablonski's lawsofux.com,
+NN/g's 10 usability heuristics, Material 3 motion + interaction
+guidance, Apple HIG, Baymard Institute checkout research) inventory the
+laws but rarely tie each one to a concrete code-gen directive. This
+file does the translation: every entry ends with one actionable move
+for an HTML / Tailwind / React-emitting agent. Sibling craft files
+(`accessibility-baseline.md`, `state-coverage.md`, `typography.md`,
+`anti-ai-slop.md`, `color.md`, `animation-discipline.md`,
+`form-validation.md`) own the auto-checked rules; this file names the
+underlying law and surfaces the folklore. Out of scope: Weber-Fechner
+psychophysics and Signal Detection Theory — both apply to UI but the
+prompt-emission directives are too narrow to earn a slot here. Add
+later if a skill needs them.
 
 The rules below are guidance, not auto-checked. Reviewers and the agent
 apply them; the linter does not. Where a law has a sibling rule already
@@ -102,8 +120,9 @@ offers a choice.
   render yearly-billing savings as concrete dollar deltas, not just
   percentage badges; pre-select the safer default in radio groups.
   Visual weight matches intended decision weight.
-- **Pareto Principle / 80-20** (Pareto, c.1906; Juran, 1941). A small
-  share of features drives most of the value. Identify the 2–3 actions
+- **Pareto Principle / 80-20** (Pareto, c.1906; Juran, *Quality Control
+  Handbook*, 1951 — popularized the management-application framing). A
+  small share of features drives most of the value. Identify the 2–3 actions
   that drive the dominant journey for the target persona; emphasize
   those visually; demote the long tail to overflow menus, footer
   surfaces, or settings.
@@ -126,13 +145,17 @@ Five laws cover how working memory handles information density and
 what the user retains afterward.
 
 - **Miller's Law and Chunking** (Miller, *The Magical Number Seven,
-  Plus or Minus Two*, *Psychological Review*, 1956). Working memory
-  holds ~4–7 items, but each item can be an arbitrarily large chunk
-  if grouped. Often misread as a rule about menu length; Miller's paper
-  is about chunks. Group related fields with clear section headings,
-  dividers, or card containers. A settings page with sections
-  "Account / Notifications / Privacy / Billing / Danger zone" beats
-  one flat list of 30 toggles.
+  Plus or Minus Two*, *Psychological Review*, 1956 — channel capacity /
+  `7±2` and chunking; Cowan, *Behavioral and Brain Sciences* 24:1, 2001
+  for the modern ~4-item working-memory bound). Working memory holds
+  about four items reliably and up to seven for short-term recall. Each
+  slot can hold a *larger familiar unit*, constrained by the user's
+  domain knowledge — chunking does not let you pack arbitrary content
+  into a single slot. Often misread as a rule about menu length;
+  Miller's paper is about chunks. Group related fields with clear
+  section headings, dividers, or card containers. A settings page with
+  sections "Account / Notifications / Privacy / Billing / Danger zone"
+  beats one flat list of 30 toggles.
 - **Working Memory** (Baddeley & Hitch, 1974; lineage to Atkinson &
   Shiffrin, 1968). Items decay in seconds without rehearsal. Recognition
   beats recall: persisting prior context across screens, marking visited
@@ -187,19 +210,23 @@ Five laws cover how fast and how accurately users can act on the UI.
 - **Goal-Gradient Effect** (Hull, *Psychological Review*, 1932; Kivetz,
   Urminsky, Zheng, 2006 for the punch-card replication). Motivation to
   finish rises as the goal gets closer. Multi-step flows render with a
-  prominent progress indicator that shows the user already partway
-  along — never starting at zero. Hull's hypothesis is descriptive;
-  treating it as license for fake progress, streak dark patterns, or
-  loyalty-program quota inflation is a misread.
+  prominent progress indicator that reflects *real* endowed progress —
+  show completed prerequisites when they truly exist (saved profile,
+  imported team, prior survey answer). When no real prerequisite
+  exists, render the current step honestly as `1 of N` with the
+  empty/current-step state clearly marked. Hull's hypothesis is
+  descriptive; treating it as license for fabricated progress, streak
+  dark patterns, or loyalty-program quota inflation is a misread.
 - **Postel's Law / Robustness Principle** (Postel, RFC 760, 1980). "Be
   liberal in what you accept, conservative in what you send." Take
   input in whatever shape users naturally give it (phone numbers with
-  or without dashes, dates in mixed formats); normalize internally;
-  emit one consistent format on output. Implementation directive lives
-  in `form-validation.md`. RFC 9413 (Thomson, IAB, 2023; built on the
-  earlier `draft-iab-protocol-maintenance`) retracts the maxim for
-  protocol design citing security surface; the UX-input application
-  stands.
+  or without dashes, dates in mixed formats, percentages with or
+  without `%`); normalize internally to a canonical form; emit one
+  consistent format on output. The error-timing and ARIA-wiring half
+  lives in `form-validation.md`; the input-tolerance half is the
+  directive above. RFC 9413 (Thomson, IAB, 2023; built on the earlier
+  `draft-iab-protocol-maintenance`) retracts the maxim for protocol
+  design citing security surface; the UX-input application stands.
 
 ## Behavior and expectation
 
@@ -236,17 +263,19 @@ with the rendered surface.
   mental effort splits into intrinsic (the task's inherent difficulty)
   and extraneous (poor layout, jargon, inconsistent patterns, visual
   noise). Designers can't reduce intrinsic load; they own extraneous
-  fully. The visual-restraint directives (single accent, paired type
-  faces, padding budget) live in `typography.md`,
-  `anti-ai-slop.md`, and `color.md`; this entry exists to name the
-  cognitive cost the rules already constrain.
+  fully. The visual-restraint directives (single accent in `color.md`,
+  three-weight typography rhythm in `typography.md`, P0 anti-default
+  list in `anti-ai-slop.md`) already constrain extraneous load; this
+  entry exists to name the cognitive cost the sibling rules reduce.
 
 ## Common mistakes (lint these)
 
 Folklore corrections that don't survive a primary-source check, in the
 same vein as the busts already documented in `animation-discipline.md`
-and `accessibility-baseline.md`. Each entry below is *not* covered in
-the body above.
+and `accessibility-baseline.md`. The first three are attribution
+corrections (year / venue / institution) the body entries already
+applied — restated here so a reviewer reading just this section sees
+them. The remainder are folklore not addressed in the body.
 
 - "Anchoring effect = Tversky & Kahneman 1972." Wrong year. The
   *Science* paper introducing the anchoring framing is 1974; the 1972
